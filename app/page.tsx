@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, useScroll } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const projects = [
   {
@@ -79,6 +79,21 @@ function Cursor() {
   return <motion.div aria-hidden="true" className="custom-cursor" style={{ x: springX, y: springY, width: size, height: size }} />;
 }
 
+function PhotoPanel() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-7%", "7%"]);
+  return (
+    <section ref={ref} className="photo-section" aria-label="Adil Ali portrait and development philosophy">
+      <div className="photo-panel">
+        <div className="photo-caption"><span>BUILD / BREAK / UNDERSTAND</span><span>REPEAT AS NEEDED ↘</span></div>
+        <motion.img className="portrait-photo" src="/adil-portrait.jpg" alt="Portrait of Adil Ali" style={{ y: photoY }} />
+        <div className="photo-type">less magic.<br /><em>more understanding.</em></div>
+        <div className="photo-code" aria-hidden="true"><span>try {"{"}</span><span> &nbsp; learnSomethingNew();</span><span>{"}"} catch (error) {"{"}</span><span> &nbsp; readTheDocs();</span><span>{"}"}</span></div>
+      </div>
+    </section>
+  );
+}
 function SmoothScroll() {
   useEffect(() => {
     const Lenis = require("lenis").default;
@@ -107,7 +122,7 @@ export default function Home() {
       <header className="topbar">
         <a className="brand" href="#top" aria-label="Adil home"># adil.</a>
         <nav className="desktop-nav" aria-label="Main navigation">
-          <a href="#works">works</a><a href="#services">services</a><a href="#about">about</a><a href="#contact">contact</a>
+          <a href="#projects">projects</a><a href="#services">services</a><a href="#about">about</a><a href="#contact">contact</a>
         </nav>
         <div className="nav-tools">
           <button className="theme-toggle" onClick={() => setDark(!dark)} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>{dark ? "☼" : "◐"}</button>
@@ -116,7 +131,7 @@ export default function Home() {
       </header>
       <AnimatePresence>
         {menuOpen && <motion.nav className="mobile-overlay" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.25 }} aria-label="Mobile navigation">
-          {["works", "services", "about", "contact"].map((item) => <a href={"#" + item} key={item} onClick={() => setMenuOpen(false)}>{item} <span>↘</span></a>)}
+          {["projects", "services", "about", "contact"].map((item) => <a href={"#" + item} key={item} onClick={() => setMenuOpen(false)}>{item} <span>↘</span></a>)}
         </motion.nav>}
       </AnimatePresence>
 
@@ -125,15 +140,15 @@ export default function Home() {
           <p className="hero-name"># a d i l.</p>
           <h1>## backend developer.</h1>
           <p className="hero-intro">I’m Adil Ali, an MCA student focused on Java backend development. I build Spring Boot APIs, work with relational databases, and learn by understanding how the pieces fit together.</p>
-          <a href="#works" className="scroll-indicator" aria-label="Scroll to selected work"><span>↓</span><i /> scroll to explore</a>
+          <a href="#projects" className="scroll-indicator" aria-label="Scroll to selected work"><span>↓</span><i /> scroll to explore</a>
         </Reveal>
         <motion.div className="hero-aside" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.7, duration: 0.8 }}>
           <span>JAVA · SPRING BOOT</span><span>REST APIS · MYSQL</span><span>DOCKER · KAFKA*</span><small>* Kafka is a current learning focus.</small>
         </motion.div>
       </section>
 
-      <section id="works" className="section-wrap content-section">
-        <Reveal><div className="section-head"><p className="section-kicker">01 / selected work</p><h2>## works.</h2></div></Reveal>
+      <section id="projects" className="section-wrap content-section">
+        <Reveal><div className="section-head"><p className="section-kicker">01 / selected work</p><h2>## projects.</h2></div></Reveal>
         <div className="work-list">
           {projects.map((project) => <Reveal key={project.number} className="work-reveal">
             <a className="work-item" href={project.href} target="_blank" rel="noreferrer" data-cursor>
@@ -145,13 +160,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="photo-section" aria-label="A little about my process">
-        <motion.div className="photo-panel" style={{ y: 0 }} whileInView={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.7 }}>
-          <div className="photo-caption"><span>BUILD / BREAK / UNDERSTAND</span><span>REPEAT AS NEEDED ↘</span></div>
-          <div className="photo-type" aria-hidden="true">less magic.<br /><em>more understanding.</em></div>
-          <div className="photo-code" aria-hidden="true"><span>try {'{'}</span><span> &nbsp; learnSomethingNew();</span><span>{'}'} catch (error) {'{'}</span><span> &nbsp; readTheDocs();</span><span>{'}'}</span></div>
-        </motion.div>
-      </section>
+      <PhotoPanel />
 
       <section id="services" className="section-wrap content-section">
         <Reveal><div className="section-head"><p className="section-kicker">02 / what I work with</p><h2>## services.</h2></div></Reveal>
